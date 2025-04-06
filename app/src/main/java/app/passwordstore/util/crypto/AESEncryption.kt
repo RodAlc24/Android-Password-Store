@@ -13,6 +13,8 @@ import android.security.keystore.KeyProperties
 import android.util.Base64
 import app.passwordstore.Application
 import app.passwordstore.util.extensions.unsafeLazy
+import com.github.michaelbull.result.getOrElse
+import com.github.michaelbull.result.runCatching
 import java.nio.ByteBuffer
 import java.nio.CharBuffer
 import java.nio.charset.StandardCharsets
@@ -22,6 +24,8 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.GCMParameterSpec
+import logcat.asLog
+import logcat.logcat
 
 object AESEncryption {
 
@@ -75,14 +79,6 @@ object AESEncryption {
             setKeySize(256)
             if (keyType == KeyType.PERSISTENT_WITH_AUTHENTICATION) {
               setUserAuthenticationRequired(true)
-              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                setUserAuthenticationParameters(
-                  30,
-                  KeyProperties.AUTH_BIOMETRIC_STRONG or KeyProperties.AUTH_DEVICE_CREDENTIAL,
-                )
-              } else {
-                @Suppress("DEPRECATION") setUserAuthenticationValidityDurationSeconds(30)
-              }
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
               setIsStrongBoxBacked(isStrongBoxSupported)
@@ -131,25 +127,64 @@ object AESEncryption {
 
   /* Public methods */
 
-  // Encrypt a CharArray using the AES key from the KeyStore and Base64-encode the result
-  fun encrypt(data: CharArray?, keyType: KeyType = KeyType.TEMPORARY): CharArray? {
-    if (data == null || !isHardwareBacked(keyType)) return null
+  /* Get a Cipher instance for encryption, decryption and biometric authentication.
+   * If encryptedBase64Data is null, it will be used for encryption. Otherwise, it will
+   * be used for decryption. */
+  fun getCipher(
+    keyType: KeyType = KeyType.TEMPORARY,
+    encryptedBase64Data: CharArray? = null,
+  ): Cipher? {
     val cipher = Cipher.getInstance(TRANSFORMATION)
-    cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(keyType))
-    return (cipher.iv + cipher.doFinal(data.toByteArray())).encodeToBase64CharArray()
+    return runCatching {
+        if (encryptedBase64Data == null) {
+          cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(keyType))
+        } else {
+          val iv = encryptedBase64Data.decodeFromBase64ToByteArray().copyOfRange(0, IV_SIZE)
+          val spec = GCMParameterSpec(128, iv)
+          cipher.init(Cipher.DECRYPT_MODE, getSecretKey(keyType), spec)
+        }
+        cipher
+      }
+      .getOrElse {
+        deleteKey(keyType)
+        initKeyStore(keyType) // refresh AES key if invalidated
+        if (encryptedBase64Data == null) getCipher(keyType, encryptedBase64Data) else null
+      }
+  }
+
+  /* Encrypt a CharArray using the AES key from the KeyStore and Base64-encode the result;
+   * prepend the cipher's init vector to the result */
+  fun encrypt(
+    data: CharArray?,
+    keyType: KeyType = KeyType.TEMPORARY,
+    cipher: Cipher? = null,
+  ): CharArray? {
+    if (data == null || !isHardwareBacked(keyType)) return null
+    val c = if (cipher != null) cipher else getCipher(keyType)
+    return runCatching {
+        if (c != null) (c.iv + c.doFinal(data.toByteArray())).encodeToBase64CharArray() else null
+      }
+      .getOrElse { e ->
+        logcat { e.asLog() }
+        null
+      }
   }
 
   // Decrypt Base64 encoded AES-encrypted data to CharArray
-  fun decrypt(encryptedBase64Data: CharArray?, keyType: KeyType = KeyType.TEMPORARY): CharArray? {
+  fun decrypt(
+    encryptedBase64Data: CharArray?,
+    keyType: KeyType = KeyType.TEMPORARY,
+    cipher: Cipher? = null,
+  ): CharArray? {
     if (encryptedBase64Data == null || !isHardwareBacked(keyType)) return null
+    val c = if (cipher != null) cipher else getCipher(keyType, encryptedBase64Data)
     val ivAndEncryptedData = encryptedBase64Data.decodeFromBase64ToByteArray()
-    val iv = ivAndEncryptedData.copyOfRange(0, IV_SIZE)
     val encryptedBytes = ivAndEncryptedData.copyOfRange(IV_SIZE, ivAndEncryptedData.size)
-    val cipher = Cipher.getInstance(TRANSFORMATION)
-    val spec = GCMParameterSpec(128, iv)
-    cipher.init(Cipher.DECRYPT_MODE, getSecretKey(keyType), spec)
-    val decryptedBytes = cipher.doFinal(encryptedBytes)
-    return decryptedBytes.toCharArray()
+    return runCatching { if (c != null) c.doFinal(encryptedBytes).toCharArray() else null }
+      .getOrElse { e ->
+        logcat { e.asLog() }
+        null
+      }
   }
 
   fun deleteKey(keyType: KeyType = KeyType.TEMPORARY) {

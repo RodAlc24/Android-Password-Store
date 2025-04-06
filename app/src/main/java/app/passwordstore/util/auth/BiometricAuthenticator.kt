@@ -13,13 +13,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.fragment.app.FragmentActivity
 import app.passwordstore.R
+import javax.crypto.Cipher
 import logcat.logcat
 
 object BiometricAuthenticator {
 
   private const val TAG = "BiometricAuthenticator"
-  private const val VALID_AUTHENTICATORS =
-    Authenticators.DEVICE_CREDENTIAL or Authenticators.BIOMETRIC_STRONG
+  private const val VALID_AUTHENTICATORS = Authenticators.BIOMETRIC_STRONG
 
   /**
    * Sealed class to wrap [BiometricPrompt]'s [Int]-based return codes into more easily-interpreted
@@ -59,6 +59,7 @@ object BiometricAuthenticator {
     @StringRes dialogTitleRes: Int = R.string.biometric_prompt_title,
     @StringRes dialogSubTitleRes: Int = 0,
     @StringRes dialogDescriptionRes: Int = 0,
+    cipher: Cipher? = null,
     callback: (Result) -> Unit,
   ) {
     val authCallback = createPromptAuthenticationCallback(activity, callback)
@@ -67,22 +68,26 @@ object BiometricAuthenticator {
       val promptInfoBuilder =
         BiometricPrompt.PromptInfo.Builder()
           .setTitle(activity.getString(dialogTitleRes))
-          .setAllowedAuthenticators(VALID_AUTHENTICATORS)
-      if (dialogSubTitleRes != 0) {
+          .setNegativeButtonText(activity.getString(R.string.dialog_cancel))
+      // fallback for non-CryptoObject based authentication
+      if (cipher == null) promptInfoBuilder.setAllowedAuthenticators(VALID_AUTHENTICATORS)
+      if (dialogSubTitleRes != 0)
         promptInfoBuilder.setSubtitle(activity.getString(dialogSubTitleRes))
-      }
-      if (dialogDescriptionRes != 0) {
+      if (dialogDescriptionRes != 0)
         promptInfoBuilder.setDescription(activity.getString(dialogDescriptionRes))
-      }
-      BiometricPrompt(
+      val biometricPrompt =
+        BiometricPrompt(
           activity,
           ContextCompat.getMainExecutor(activity.applicationContext),
           authCallback,
         )
-        .authenticate(promptInfoBuilder.build())
-    } else {
-      callback(Result.HardwareUnavailableOrDisabled)
-    }
+      if (cipher != null) {
+        biometricPrompt.authenticate(
+          promptInfoBuilder.build(),
+          BiometricPrompt.CryptoObject(cipher),
+        )
+      } else biometricPrompt.authenticate(promptInfoBuilder.build())
+    } else callback(Result.HardwareUnavailableOrDisabled)
   }
 
   private fun createPromptAuthenticationCallback(
