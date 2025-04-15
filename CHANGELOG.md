@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Emit a warning if another fingerprint was added since last app use
+
 ### Fixed
 
 - With biometric authentication at app launch, the biometric prompt was immediately hidden, requiring the user to reopen the app before it could be finally unlocked
