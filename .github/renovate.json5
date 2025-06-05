@@ -48,8 +48,8 @@
       ],
       enabled: false,
       matchPackageNames: [
-        '^org.eclipse.jgit',
-        '^com.squareup.logcat',
+        'org.eclipse.jgit',
+        'com.squareup.logcat',
       ],
     },
   ],
