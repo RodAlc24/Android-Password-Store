@@ -220,6 +220,7 @@
   <string name="oreo_autofill_warning_publisher_footer"><b>Die derzeit installierte App versucht, Ihre Anmeldeinformationen zu stehlen, indem sie vorgibt, eine vertrauenswürdige App zu sein.</b>\n\nVersuchen Sie, die App zu deinstallieren und installieren Sie sie erneut aus einer vertrauenswürdigen Quelle wie dem Play Store, Amazon Appstore, F-Droid oder dem Shop Ihres Telefonherstellers.</string>
   <string name="oreo_autofill_warning_publisher_install_time">Installiert: %1$s</string>
 
+  <string name="oreo_autofill_warning_publisher_advanced_info_template">Paket:\n%1$s\n\nHash:\n%2$s</string>
   <string name="oreo_autofill_warning_publisher_advanced_info_button">Erweiterte Informationen</string>
   <string name="oreo_autofill_warning_publisher_changed_disable_autofill_button">Autofill deaktiviert lassen</string>
   <string name="oreo_autofill_warning_publisher_reenable_button">Autofill erneut aktivieren</string>
