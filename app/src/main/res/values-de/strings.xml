@@ -142,6 +142,7 @@
   <string name="pref_pgp_ascii_armor_title">Im ASCII-Armor-Modus verschlüsseln</string>
   <string name="pref_pgp_key_manager_export">Backup/Exportieren</string>
   <string name="pref_pgp_key_manager_export_public">Öffentlichen Schlüssel exportieren</string>
+  <string name="pref_pgp_key_manager_change_passphrase">Kennwortsatz ändern</string>
 
   <!-- PasswordGenerator fragment -->
   <string name="pwgen_title">Passwort erstellen</string>
@@ -385,6 +386,15 @@
   <string name="pgp_key_creation_succeeded_message">Die ID des neuen Schlüssels lautet:\n%1$s</string>
   <string name="pgp_key_creation_error">Fehler bei der PGP-Schlüsselerstellung</string>
   <string name="pgp_key_creation_error_message">Beim Erstellen eines neuen PGP-Schlüssels ist ein Fehler aufgetreten:\n%1$s</string>
+  <string name="pgp_key_change_passphrase_succeeded">Kennwortsatz geändert</string>
+  <string name="pgp_key_change_passphrase_succeeded_message">Der Kennwortsatz des Schlüssels mit der ID %1$s wurde erfolgreich geändert.</string>
+  <string name="pgp_key_change_passphrase_error">Fehler beim Setzen des Kennwortsatzes</string>
+  <string name="pgp_key_change_passphrase_error_message">Beim Setzen des neuen Kennwortsatzes ist ein Fehler aufgetreten:\n%1$s</string>
+  <string name="pgp_key_empty_passphrase_warning">Leerer Kennwortsatz</string>
+  <string name="pgp_key_empty_passphrase_warning_message">Mit leerem Kennwortsatz ist der PGP-Schlüssel völlig ungeschützt. Davon wird grundsätzlich abgeraten.</string>
+  <string name="pgp_key_short_passphrase_warning">Unsicherer Kennwortsatz</string>
+  <string name="pgp_key_short_passphrase_warning_message">Ein Kennwortsatz sollte mindestens acht Zeichen lang sein.</string>
+  <string name="pgp_key_insecure_passphrase_warning_confirm">Trotzdem fortfahren</string>
   <string name="pref_category_pgp_title">PGP-Einstellungen</string>
   <string name="pwgen_some_error_occurred">Ein Fehler ist aufgetreten.</string>
   <string name="git_run_gc_job">Garbage Collection ausführen</string>
@@ -392,6 +402,10 @@
   <string name="activity_label_pgp_key_select">Wählen Sie einen PGP-Schlüssel</string>
   <string name="pgp_key_manager_delete_confirmation_dialog_title">Schlüssel löschen?</string>
   <string name="pgp_key_manager_delete_confirmation_dialog_message">Stellen Sie sicher, dass Sie eine Sicherungskopie des PGP-Schlüssels haben. Andernfalls gehen alle mit diesem Schlüssel verschlüsselten Passworteinträge verloren.</string>
+  <string name="pgp_change_passphrase_title">PGP-Kennwortsatz ändern</string>
+  <string name="pgp_old_passphrase">Aktueller Kennwortsatz</string>
+  <string name="pgp_new_passphrase">Neuer Kennwortsatz</string>
+  <string name="pgp_new_passphrase_repeated">Neuen Kennwortsatz wiederholen</string>
   <string name="git_utils_reset_remote_branch_title">Name des Remote-Branchs</string>
   <string name="pgp_key_manager_no_keys_guidance">Fügen Sie einen Schlüssel über die Schaltfläche \"+\" hinzu.</string>
   <string name="no_keys_imported_dialog_title">Keine Schlüssel vorhanden</string>

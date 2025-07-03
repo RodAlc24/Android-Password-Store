@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,6 +55,8 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 fun KeyList(
   identifiers: ImmutableList<PGPIdentifier>,
+  hasSecretKey: (identifier: PGPIdentifier) -> Boolean,
+  onChangePassphraseClick: (identifier: PGPIdentifier) -> Unit,
   onDeleteItemClick: (identifier: PGPIdentifier) -> Unit,
   onExportItemClick: (identifier: PGPIdentifier) -> Unit,
   onExportPublicClick: (identifier: PGPIdentifier) -> Unit,
@@ -77,6 +80,8 @@ fun KeyList(
       items(identifiers) { identifier ->
         KeyItem(
           identifier = identifier,
+          hasSecretKey = hasSecretKey,
+          onChangePassphraseClick = onChangePassphraseClick,
           onDeleteItemClick = onDeleteItemClick,
           onExportItemClick = onExportItemClick,
           onExportPublicClick = onExportPublicClick,
@@ -90,6 +95,8 @@ fun KeyList(
 @Composable
 private fun KeyItem(
   identifier: PGPIdentifier,
+  hasSecretKey: (identifier: PGPIdentifier) -> Boolean,
+  onChangePassphraseClick: (identifier: PGPIdentifier) -> Unit,
   onDeleteItemClick: (identifier: PGPIdentifier) -> Unit,
   onExportItemClick: (identifier: PGPIdentifier) -> Unit,
   onExportPublicClick: (identifier: PGPIdentifier) -> Unit,
@@ -134,13 +141,23 @@ private fun KeyItem(
         }
 
         DropdownMenu(expanded = isMenuExpanded, onDismissRequest = { isMenuExpanded = false }) {
-          DropdownMenuItem(
-            text = { Text(stringResource(id = R.string.pref_pgp_key_manager_export)) },
-            onClick = {
-              isMenuExpanded = false
-              onExportItemClick(identifier)
-            },
-          )
+          if (hasSecretKey(identifier)) {
+            DropdownMenuItem(
+              text = { Text(stringResource(id = R.string.pref_pgp_key_manager_change_passphrase)) },
+              onClick = {
+                isMenuExpanded = false
+                onChangePassphraseClick(identifier)
+              },
+            )
+            DropdownMenuItem(
+              text = { Text(stringResource(id = R.string.pref_pgp_key_manager_export)) },
+              onClick = {
+                isMenuExpanded = false
+                onExportItemClick(identifier)
+              },
+            )
+            Spacer(modifier = Modifier)
+          }
           DropdownMenuItem(
             text = { Text(stringResource(id = R.string.pref_pgp_key_manager_export_public)) },
             onClick = {
@@ -148,6 +165,7 @@ private fun KeyItem(
               onExportPublicClick(identifier)
             },
           )
+          HorizontalDivider(modifier = Modifier.padding(top = SpacingLarge))
           DropdownMenuItem(
             text = {
               Text(stringResource(id = R.string.delete))
@@ -215,6 +233,8 @@ private fun KeyListPreview() {
               PGPIdentifier.fromString("0xB950AE2813841585"),
             )
             .toPersistentList(),
+        hasSecretKey = { _ -> true },
+        onChangePassphraseClick = {},
         onDeleteItemClick = {},
         onExportItemClick = {},
         onExportPublicClick = {},
@@ -230,6 +250,8 @@ private fun EmptyKeyListPreview() {
     Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
       KeyList(
         identifiers = persistentListOf(),
+        hasSecretKey = { _ -> true },
+        onChangePassphraseClick = {},
         onDeleteItemClick = {},
         onExportItemClick = {},
         onExportPublicClick = {},

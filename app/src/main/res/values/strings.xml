@@ -143,6 +143,7 @@
   <string name="pref_pgp_ascii_armor_title">Encrypt in ASCII armor mode</string>
   <string name="pref_pgp_key_manager_export">Backup/Export</string>
   <string name="pref_pgp_key_manager_export_public">Export public key</string>
+  <string name="pref_pgp_key_manager_change_passphrase">Change passphrase</string>
 
   <!-- PasswordGenerator fragment -->
   <string name="pwgen_title">Generate Password</string>
@@ -340,7 +341,7 @@
   <string name="select_repo_type_text">Select if you want to create a local repo or clone a remote repo.</string>
   <string name="clone_remote_repo">Clone Remote Repo</string>
   <string name="create_local_repo">Create Local Repo</string>
-  <string name="select_gpg_key_title">Select\nPGP Key</string>
+  <string name="select_gpg_key_title">Select\nPGP key</string>
   <string name="select_gpg_key_message">Select a PGP key to initialize your store with</string>
   <string name="gpg_key_select">Select key</string>
 
@@ -386,13 +387,26 @@
   <string name="pgp_key_creation_succeeded_message">The ID of the new key is:\n%1$s</string>
   <string name="pgp_key_creation_error">PGP key creation failure</string>
   <string name="pgp_key_creation_error_message">An error occurred while generating a new PGP key:\n%1$s</string>
+  <string name="pgp_key_change_passphrase_succeeded">Passphrase changed</string>
+  <string name="pgp_key_change_passphrase_succeeded_message">The passphrase of the key with the ID %1$s was successfully changed.</string>
+  <string name="pgp_key_change_passphrase_error">Error while setting the passphrase</string>
+  <string name="pgp_key_change_passphrase_error_message">Error while setting a new passphrase:\n%1$s</string>
+  <string name="pgp_key_empty_passphrase_warning">Empty passphrase</string>
+  <string name="pgp_key_empty_passphrase_warning_message">With an empty passphrase, the PGP key is completely unprotected. This is generally discouraged.</string>
+  <string name="pgp_key_short_passphrase_warning">Insecure passhrase</string>
+  <string name="pgp_key_short_passphrase_warning_message">A passphrase should be at least eight characters long.</string>
+  <string name="pgp_key_insecure_passphrase_warning_confirm">Continue anyway</string>
   <string name="pref_category_pgp_title">PGP settings</string>
   <string name="pwgen_some_error_occurred">Some error occurred</string>
   <string name="git_run_gc_job">Run garbage collection job</string>
   <string name="activity_label_pgp_key_manager">PGP Key Manager</string>
-  <string name="activity_label_pgp_key_select">Select PGP Key</string>
+  <string name="activity_label_pgp_key_select">Select PGP key</string>
   <string name="pgp_key_manager_delete_confirmation_dialog_title">Delete key?</string>
   <string name="pgp_key_manager_delete_confirmation_dialog_message">Be sure to keep a backup of the PGP key. Without it, you will lose access to any password items encrypted with that key.</string>
+  <string name="pgp_change_passphrase_title">Change PGP key passphrase</string>
+  <string name="pgp_old_passphrase">Current passphrase</string>
+  <string name="pgp_new_passphrase">New passphrase</string>
+  <string name="pgp_new_passphrase_repeated">Repeat new passphrase</string>
   <string name="git_utils_reset_remote_branch_title">Remote branch name</string>
   <string name="pgp_key_manager_no_keys_guidance">Add a key using the \"+\" button below</string>
   <string name="no_keys_imported_dialog_title">No keys available</string>

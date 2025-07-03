@@ -49,7 +49,6 @@ import java.io.IOException
 import java.security.SecureRandom
 import javax.inject.Inject
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import logcat.LogPriority.ERROR
 import logcat.asLog
 import logcat.logcat
@@ -65,14 +64,7 @@ class PGPKeyListActivity : AppCompatActivity() {
 
   private val viewModel: PGPKeyListViewModel by viewModels()
 
-  private val keyImportAction =
-    registerForActivityResult(StartActivityForResult()) {
-      if (it.resultCode == RESULT_OK) {
-        viewModel.updateKeySet()
-      }
-    }
-
-  private val keyAddAction =
+  private val keyAction =
     registerForActivityResult(StartActivityForResult()) {
       if (it.resultCode == RESULT_OK) {
         viewModel.updateKeySet()
@@ -95,8 +87,8 @@ class PGPKeyListActivity : AppCompatActivity() {
     val isSelecting = intent.extras?.getBoolean(EXTRA_KEY_SELECTION) ?: false
     supportFragmentManager.setFragmentResultListener(PGP_KEY_ADD_REQUEST_KEY, this) { _, bundle ->
       when (bundle.getString(ACTION_KEY)) {
-        ACTION_IMPORT_FILE -> keyAddAction.launch(Intent(this, PGPKeyImportActivity::class.java))
-        ACTION_NEW_PGP_KEY -> keyAddAction.launch(Intent(this, PGPKeyCreationActivity::class.java))
+        ACTION_IMPORT_FILE -> keyAction.launch(Intent(this, PGPKeyImportActivity::class.java))
+        ACTION_NEW_PGP_KEY -> keyAction.launch(Intent(this, PGPKeyCreationActivity::class.java))
       }
     }
     setContent {
@@ -115,7 +107,6 @@ class PGPKeyListActivity : AppCompatActivity() {
           floatingActionButton = {
             FloatingActionButton(
               onClick = {
-                // keyImportAction.launch(Intent(this, PGPKeyImportActivity::class.java))
                 AddPgpKeyBottomSheet().show(supportFragmentManager, "ADD_PGP_KEY_BOTTOM_SHEET")
               }
             ) {
@@ -128,6 +119,8 @@ class PGPKeyListActivity : AppCompatActivity() {
         ) { paddingValues ->
           KeyList(
             identifiers = viewModel.keys,
+            hasSecretKey = ::hasSecretKey,
+            onChangePassphraseClick = ::changeKeyPassphrase,
             onDeleteItemClick = viewModel::deleteKey,
             onExportItemClick = ::exportKey,
             onExportPublicClick = ::exportPublicKey,
@@ -135,7 +128,7 @@ class PGPKeyListActivity : AppCompatActivity() {
             onKeySelected =
               if (isSelecting) {
                 { identifier ->
-                  val keyId = runBlocking { // ensure numeric key ID
+                  val keyId = run { // ensure numeric key ID
                     val key = pgpKeyManager.getKeyById(identifier).unwrap()
                     pgpKeyManager.getKeyId(key) ?: throw NullPointerException()
                   }
@@ -149,6 +142,15 @@ class PGPKeyListActivity : AppCompatActivity() {
         }
       }
     }
+  }
+
+  private fun hasSecretKey(identifier: PGPIdentifier): Boolean =
+    cryptoRepository.hasSecretKey(identifier)
+
+  private fun changeKeyPassphrase(identifier: PGPIdentifier) {
+    val intent = Intent(this, PGPKeyChangePassphraseActivity::class.java)
+    intent.putExtra(PGPKeyChangePassphraseActivity.EXTRA_SELECTED_IDENTIFIER, identifier.toString())
+    keyAction.launch(intent)
   }
 
   private fun exportKey(identifier: PGPIdentifier) {
@@ -226,7 +228,7 @@ class PGPKeyListActivity : AppCompatActivity() {
   }
 
   private fun writeBackupFile(identifier: PGPIdentifier, code: String? = null) {
-    val keyIdAndContent = runBlocking {
+    val keyIdAndContent = run {
       val key = pgpKeyManager.getKeyById(identifier).unwrap()
       val contents =
         if (code != null) { // encrypt secret keys symmetrically

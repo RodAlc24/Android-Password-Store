@@ -51,7 +51,6 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import logcat.asLog
 import logcat.logcat
@@ -248,7 +247,7 @@ open class BasePGPActivity : AppCompatActivity() {
             null
           } else {
             val id = PGPIdentifier.fromString(line)
-            if (id == null || !runBlocking { repository.hasKey(id) }) {
+            if (id == null || !repository.hasKey(id)) {
               invalidIdCount++
               persistentPassphrases.edit { remove(id.toString()) }
               null

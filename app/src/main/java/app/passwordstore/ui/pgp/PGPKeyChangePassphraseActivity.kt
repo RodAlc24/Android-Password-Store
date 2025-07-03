@@ -8,12 +8,15 @@ package app.passwordstore.ui.pgp
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import app.passwordstore.R
 import app.passwordstore.crypto.KeyUtils.tryGetId
+import app.passwordstore.crypto.PGPIdentifier
 import app.passwordstore.crypto.PGPKeyManager
-import app.passwordstore.databinding.PgpKeyCreationActivityBinding
+import app.passwordstore.data.crypto.CryptoRepository
+import app.passwordstore.databinding.PgpKeyChangePassphraseActivityBinding
 import app.passwordstore.util.extensions.getString
 import app.passwordstore.util.extensions.viewBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -24,18 +27,30 @@ import logcat.asLog
 import logcat.logcat
 
 @AndroidEntryPoint
-class PGPKeyCreationActivity : AppCompatActivity() {
+class PGPKeyChangePassphraseActivity : AppCompatActivity() {
 
-  private val binding by viewBinding(PgpKeyCreationActivityBinding::inflate)
+  private val binding by viewBinding(PgpKeyChangePassphraseActivityBinding::inflate)
   @Inject lateinit var keyManager: PGPKeyManager
+  @Inject lateinit var cryptoRepository: CryptoRepository
+
+  private lateinit var identifier: PGPIdentifier
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    title = getString(R.string.pgp_new_pgp_key_title)
+    title = getString(R.string.pgp_change_passphrase_title)
+
+    identifier =
+      requireNotNull(
+        PGPIdentifier.fromString(intent.getStringExtra(EXTRA_SELECTED_IDENTIFIER) ?: "")
+      ) {
+        "invalid PGP identifier"
+      }
+
     with(binding) {
       setContentView(root)
-      email.doOnTextChanged { _, _, _, _ -> emailInputLayout.error = null }
+      userid.text = cryptoRepository.getUserIdFromKeyId(identifier)
+      oldPassphrase.doOnTextChanged { _, _, _, _ -> oldPassphraseInputLayout.error = null }
       passphrase.doOnTextChanged { _, _, _, _ ->
         passphraseInputLayout.error = null
         repeatPassphraseInputLayout.error = null
@@ -44,6 +59,8 @@ class PGPKeyCreationActivity : AppCompatActivity() {
         passphraseInputLayout.error = null
         repeatPassphraseInputLayout.error = null
       }
+      if (cryptoRepository.isPasswordProtected(listOf(identifier)))
+        oldPassphraseInputLayout.visibility = View.VISIBLE
     }
   }
 
@@ -59,15 +76,13 @@ class PGPKeyCreationActivity : AppCompatActivity() {
         onBackPressedDispatcher.onBackPressed()
       }
       R.id.save_key -> {
-        val email = binding.email.text.toString().trim()
-        val emailIsValid =
-          if (email.isEmpty()) {
-            binding.emailInputLayout.error = getString(R.string.pgp_email_input_required_error)
+        val oldPassphrase = binding.oldPassphrase.text?.let { CharArray(it.length) { i -> it[i] } }
+        val oldPassphraseIsCorrect =
+          if (cryptoRepository.isPasswordCorrect(identifier, oldPassphrase)) true
+          else {
+            binding.oldPassphraseInputLayout.error = getString(R.string.pgp_wrong_passphrase_input)
             false
-          } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.emailInputLayout.error = getString(R.string.pgp_email_input_invalid_error)
-            false
-          } else true
+          }
 
         val passphrase =
           binding.passphrase.text?.let { CharArray(it.length) { i -> it[i] } } ?: charArrayOf()
@@ -83,11 +98,11 @@ class PGPKeyCreationActivity : AppCompatActivity() {
             false
           }
 
-        if (emailIsValid && passphrasesMatch) {
+        if (oldPassphraseIsCorrect && passphrasesMatch) {
           if (passphrase.size >= 8) {
-            createPgpKey(email, passphrase)
+            changePassphrase(identifier, oldPassphrase, passphrase)
           } else {
-            insecurePassphraseWarning(email, passphrase)
+            insecurePassphraseWarning(identifier, oldPassphrase, passphrase)
           }
         }
       }
@@ -96,7 +111,11 @@ class PGPKeyCreationActivity : AppCompatActivity() {
     return true
   }
 
-  private fun insecurePassphraseWarning(email: String, passphrase: CharArray) {
+  private fun insecurePassphraseWarning(
+    identifier: PGPIdentifier,
+    oldPassphrase: CharArray?,
+    passphrase: CharArray,
+  ) {
     val (title, message) =
       if (passphrase.isEmpty()) {
         Pair(
@@ -114,21 +133,23 @@ class PGPKeyCreationActivity : AppCompatActivity() {
       .setTitle(title)
       .setMessage(message)
       .setPositiveButton(getString(R.string.pgp_key_insecure_passphrase_warning_confirm)) { _, _ ->
-        createPgpKey(email, passphrase)
+        changePassphrase(identifier, oldPassphrase, passphrase)
       }
       .setNegativeButton(R.string.dialog_cancel, null)
       .show()
   }
 
-  private fun createPgpKey(email: String, passphrase: CharArray) {
-    val name = binding.name.text.toString().trim()
-    val userId = if (name.length > 0) "${name} <${email}>" else email
-    val (key, error) = keyManager.generateKey(userId, passphrase)
+  private fun changePassphrase(
+    identifier: PGPIdentifier,
+    oldPassphrase: CharArray?,
+    passphrase: CharArray,
+  ) {
+    val (key, error) = keyManager.changeKeyPassphrase(identifier, oldPassphrase, passphrase)
 
     if (key != null) {
       MaterialAlertDialogBuilder(this)
-        .setTitle(getString(R.string.pgp_key_creation_succeeded))
-        .setMessage(getString(R.string.pgp_key_creation_succeeded_message, tryGetId(key)))
+        .setTitle(getString(R.string.pgp_key_change_passphrase_succeeded))
+        .setMessage(getString(R.string.pgp_key_change_passphrase_succeeded_message, tryGetId(key)))
         .setPositiveButton(android.R.string.ok) { _, _ ->
           setResult(RESULT_OK)
           finish()
@@ -138,10 +159,13 @@ class PGPKeyCreationActivity : AppCompatActivity() {
     } else {
       logcat(ERROR) { error?.asLog() ?: "unknown error" }
       MaterialAlertDialogBuilder(this)
-        .setTitle(getString(R.string.pgp_key_creation_error))
+        .setTitle(getString(R.string.pgp_key_change_passphrase_error))
         .setIcon(R.drawable.ic_crossmark_red_24dp)
         .setMessage(
-          getString(R.string.pgp_key_creation_error_message, error?.message ?: "unknown error")
+          getString(
+            R.string.pgp_key_change_passphrase_error_message,
+            error?.message ?: "unknown error",
+          )
         )
         .setPositiveButton(android.R.string.ok) { _, _ ->
           setResult(RESULT_CANCELED)
@@ -150,5 +174,10 @@ class PGPKeyCreationActivity : AppCompatActivity() {
         .setCancelable(false)
         .show()
     }
+  }
+
+  companion object {
+
+    const val EXTRA_SELECTED_IDENTIFIER = "SELECTED_IDENTIFIER"
   }
 }

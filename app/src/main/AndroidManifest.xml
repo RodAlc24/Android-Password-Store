@@ -160,6 +160,11 @@
       android:exported="false"
       android:label="@string/pgp_new_pgp_key_title"
       android:windowSoftInputMode="adjustResize" />
+    <activity
+      android:name=".ui.pgp.PGPKeyChangePassphraseActivity"
+      android:exported="false"
+      android:label="@string/pgp_change_passphrase_title"
+      android:windowSoftInputMode="adjustResize" />
 
   </application>
 

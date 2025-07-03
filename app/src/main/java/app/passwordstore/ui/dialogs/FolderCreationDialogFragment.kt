@@ -39,9 +39,9 @@ class FolderCreationDialogFragment : DialogFragment() {
         val selectedKeyId =
           data.getStringExtra(PGPKeyListActivity.EXTRA_SELECTED_KEY)
             ?: return@registerForActivityResult
+        val gpgIdentifierFile = File(newFolder, ".gpg-id")
+        gpgIdentifierFile.writeText(selectedKeyId)
         runBlocking {
-          val gpgIdentifierFile = File(newFolder, ".gpg-id")
-          gpgIdentifierFile.writeText(selectedKeyId)
           requireActivity()
             .commitChange(getString(R.string.git_commit_gpg_id, getString(R.string.app_name)))
         }
