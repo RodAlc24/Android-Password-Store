@@ -8,6 +8,7 @@ import app.passwordstore.util.log.LogcatLogger
 import com.github.michaelbull.result.runCatching
 import com.hierynomus.sshj.key.KeyAlgorithms
 import com.hierynomus.sshj.transport.cipher.BlockCiphers
+import com.hierynomus.sshj.transport.cipher.ChachaPolyCiphers
 import com.hierynomus.sshj.transport.cipher.GcmCiphers
 import com.hierynomus.sshj.transport.kex.ExtInfoClientFactory
 import com.hierynomus.sshj.transport.mac.Macs
@@ -130,11 +131,12 @@ class SshjConfig : ConfigImpl() {
   private fun initCipherFactories() {
     cipherFactories =
       listOf(
+        ChachaPolyCiphers.CHACHA_POLY_OPENSSH(),
         GcmCiphers.AES128GCM(),
         GcmCiphers.AES256GCM(),
-        BlockCiphers.AES256CTR(),
-        BlockCiphers.AES192CTR(),
         BlockCiphers.AES128CTR(),
+        BlockCiphers.AES192CTR(),
+        BlockCiphers.AES256CTR(),
       )
   }
 
