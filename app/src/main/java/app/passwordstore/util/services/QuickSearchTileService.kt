@@ -13,7 +13,7 @@ class QuickSearchTileService : TileService() {
     val intent =
       Intent(this, PasswordStore::class.java).apply {
         action = Intent.ACTION_SEARCH
-        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
       }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
