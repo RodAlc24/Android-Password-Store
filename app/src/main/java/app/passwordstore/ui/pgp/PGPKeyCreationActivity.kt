@@ -8,7 +8,12 @@ package app.passwordstore.ui.pgp
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doOnTextChanged
 import app.passwordstore.R
 import app.passwordstore.crypto.KeyUtils.tryGetId
@@ -31,9 +36,21 @@ class PGPKeyCreationActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    WindowCompat.enableEdgeToEdge(window)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     title = getString(R.string.pgp_new_pgp_key_title)
     with(binding) {
+      ViewCompat.setOnApplyWindowInsetsListener(root) { v, windowInsets ->
+        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+        v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+          topMargin = insets.top
+          leftMargin = insets.left
+          bottomMargin = insets.bottom
+          rightMargin = insets.right
+        }
+
+        WindowInsetsCompat.CONSUMED
+      }
       setContentView(root)
       email.doOnTextChanged { _, _, _, _ -> emailInputLayout.error = null }
       passphrase.doOnTextChanged { _, _, _, _ ->

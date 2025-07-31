@@ -8,9 +8,14 @@ import android.os.Bundle
 import android.security.keystore.UserNotAuthenticatedException
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import app.passwordstore.R
 import app.passwordstore.databinding.ActivitySshKeygenBinding
@@ -48,6 +53,18 @@ class SshKeyGenActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    WindowCompat.enableEdgeToEdge(window)
+    ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
+      val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+      v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        topMargin = insets.top
+        leftMargin = insets.left
+        bottomMargin = insets.bottom
+        rightMargin = insets.right
+      }
+
+      WindowInsetsCompat.CONSUMED
+    }
     setContentView(binding.root)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     with(binding) {

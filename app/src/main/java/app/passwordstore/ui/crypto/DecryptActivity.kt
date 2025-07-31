@@ -9,7 +9,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
 import androidx.core.content.edit
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import app.passwordstore.R
 import app.passwordstore.crypto.PGPIdentifier
@@ -46,9 +51,21 @@ class DecryptActivity : BasePGPActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    WindowCompat.enableEdgeToEdge(window)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     title = name
     with(binding) {
+      ViewCompat.setOnApplyWindowInsetsListener(root) { v, windowInsets ->
+        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+        v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+          topMargin = insets.top
+          leftMargin = insets.left
+          bottomMargin = insets.bottom
+          rightMargin = insets.right
+        }
+
+        WindowInsetsCompat.CONSUMED
+      }
       setContentView(root)
       passwordCategory.text = relativeParentPath
       passwordFile.text = name

@@ -11,8 +11,13 @@ import android.os.Handler
 import android.os.Looper
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.os.postDelayed
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import app.passwordstore.R
@@ -48,6 +53,18 @@ class GitServerConfigActivity : BaseGitActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    WindowCompat.enableEdgeToEdge(window)
+    ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
+      val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+      v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        topMargin = insets.top
+        leftMargin = insets.left
+        bottomMargin = insets.bottom
+        rightMargin = insets.right
+      }
+
+      WindowInsetsCompat.CONSUMED
+    }
     val isClone = intent?.extras?.getBoolean("cloning") ?: false
     if (isClone) {
       binding.saveButton.text = getString(R.string.clone_button)

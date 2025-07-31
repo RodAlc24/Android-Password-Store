@@ -9,7 +9,12 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Patterns
 import android.view.MenuItem
+import android.view.ViewGroup
 import androidx.core.os.postDelayed
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import app.passwordstore.R
@@ -40,6 +45,18 @@ class GitConfigActivity : BaseGitActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    WindowCompat.enableEdgeToEdge(window)
+    ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
+      val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+      v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        topMargin = insets.top
+        leftMargin = insets.left
+        bottomMargin = insets.bottom
+        rightMargin = insets.right
+      }
+
+      WindowInsetsCompat.CONSUMED
+    }
     setContentView(binding.root)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

@@ -17,10 +17,15 @@ import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.core.content.edit
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import app.passwordstore.R
@@ -142,10 +147,22 @@ class PasswordCreationActivity : BasePGPActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    WindowCompat.enableEdgeToEdge(window)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     title =
       if (editing) getString(R.string.edit_password) else getString(R.string.new_password_title)
     with(binding) {
+      ViewCompat.setOnApplyWindowInsetsListener(root) { v, windowInsets ->
+        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+        v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+          topMargin = insets.top
+          leftMargin = insets.left
+          bottomMargin = insets.bottom
+          rightMargin = insets.right
+        }
+
+        WindowInsetsCompat.CONSUMED
+      }
       setContentView(root)
       generatePassword.setOnClickListener { generatePassword() }
       otpImportButton.setOnClickListener {
