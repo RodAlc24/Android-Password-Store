@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Invisible "Copy" icon at the end of field items on password UI
+- Extra content lines with the same `label:` in the first column were dropped, except the last line. Now, such lines are shown in a common text box, which is useful for saving configuration files as APS items
 
 ## [1.15.0] - 2025-07-11
 
