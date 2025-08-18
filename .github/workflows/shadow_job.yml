@@ -14,7 +14,7 @@ jobs:
         uses: usefulness/agp-version-finder-action@aecea9c2f6cb188f39f5512d1d2e0bd4afda89e1 # v1
       - id: build-agp-matrix
         shell: bash
-        run: echo 'agp-versions=["${{ steps.agp-version-finder.outputs.latest-beta }}","${{ steps.agp-version-finder.outputs.latest-alpha }}"]' >> $GITHUB_OUTPUT
+        run: echo 'agp-versions=["${{ steps.agp-version-finder.outputs.latest-rc }}", "${{ steps.agp-version-finder.outputs.latest-alpha }}"]' >> $GITHUB_OUTPUT
 
   shadow-job:
     needs: [provide-agp-version-matrix]
@@ -27,7 +27,7 @@ jobs:
           - release-nightly
           - nightly
         java-version:
-          - 20
+          - 21
     runs-on: ubuntu-latest
     name: Run Gradle-${{ matrix.gradle-version }}, AGP-${{ matrix.agp-version }}, Java-${{ matrix.java-version }}
     steps:
