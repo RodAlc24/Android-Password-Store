@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Exported PGP keys are now usable as OpenKeychain key backups
+
 ## [1.15.1] - 2025-08-15
 
 ### Added
