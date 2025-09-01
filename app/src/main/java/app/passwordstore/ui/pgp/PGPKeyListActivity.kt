@@ -222,6 +222,8 @@ class PGPKeyListActivity : AppCompatActivity() {
         .setPositiveButton(R.string.dialog_ok) { _, _ ->
           lifecycleScope.launch { writeBackupFile(identifier, code) }
         }
+        .setNegativeButton(R.string.dialog_cancel, null)
+        .setCancelable(false)
         .create()
 
     dialog.setOnShowListener {
