@@ -146,7 +146,7 @@
   <string name="pref_pgp_key_manager_change_passphrase">Change passphrase</string>
 
   <!-- PasswordGenerator fragment -->
-  <string name="pwgen_title">Generate Password</string>
+  <string name="pwgen_title">Generate password</string>
   <string name="pwgen_generate">Generate</string>
   <string name="pwgen_include">Include</string>
   <string name="pwgen_length">Length</string>
@@ -246,7 +246,7 @@
   <string name="git_head_on_branch">On branch %1$s</string>
   <string name="git_head_detached">HEAD detached at %1$s</string>
   <string name="git_head_missing">Unable to locate HEAD</string>
-  <string name="git_abort_and_push_title">Abort and Push</string>
+  <string name="git_abort_and_push_title">Abort and push</string>
   <string name="biometric_prompt_default_description">Authenticate to continue</string>
   <string name="biometric_auth_error_reason">Authentication failure: %s</string>
   <string name="pref_biometric_auth_title">Enable authentication on app start</string>
@@ -396,7 +396,7 @@
   <string name="pref_category_pgp_title">PGP settings</string>
   <string name="pwgen_some_error_occurred">Some error occurred</string>
   <string name="git_run_gc_job">Run garbage collection job</string>
-  <string name="activity_label_pgp_key_manager">PGP Key Manager</string>
+  <string name="activity_label_pgp_key_manager">PGP key manager</string>
   <string name="activity_label_pgp_key_select">Select one or more PGP keys</string>
   <string name="pgp_key_manager_delete_secret_key_confirmation_dialog_title">Delete secret key?</string>
   <string name="pgp_key_manager_delete_key_confirmation_dialog_title">Delete key?</string>
@@ -408,8 +408,8 @@
   <string name="git_utils_reset_remote_branch_title">Remote branch name</string>
   <string name="pgp_key_manager_no_keys_guidance">Add a key using the \"+\" button below</string>
   <string name="no_keys_imported_dialog_title">No keys available</string>
-  <string name="no_keys_imported_dialog_message">No PGP keys have been added to the app yet. Import a key file or create a new key in the PGP Key Manager.</string>
-  <string name="no_keys_imported_dialog_open_key_manager">Open PGP Key Manager</string>
+  <string name="no_keys_imported_dialog_message">No PGP keys have been added to the app yet. Import a key file or create a new key in the PGP key manager.</string>
+  <string name="no_keys_imported_dialog_open_key_manager">Open PGP key manager</string>
 
   <!-- Passphrase input -->
   <string name="cache_password_until_screen_off">Keep passphrase until screen-off</string>
