@@ -4,7 +4,6 @@
  */
 package app.passwordstore
 
-// import androidx.appcompat.app.AppCompatDelegate
 import android.app.Activity
 import android.app.Application
 import android.content.BroadcastReceiver
@@ -18,7 +17,7 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.view.View
 import android.view.WindowInsetsController
-import androidx.appcompat.app.AppCompatDelegate.*
+import androidx.appcompat.app.AppCompatDelegate
 import app.passwordstore.data.repo.PasswordRepository
 import app.passwordstore.injection.context.FilesDirPath
 import app.passwordstore.injection.prefs.SettingsPreferences
@@ -210,12 +209,12 @@ class Application : android.app.Application(), SharedPreferences.OnSharedPrefere
   }
 
   private fun setNightMode() {
-    setDefaultNightMode(
+    AppCompatDelegate.setDefaultNightMode(
       when (prefs.getString(PreferenceKeys.APP_THEME) ?: getString(R.string.app_theme_def)) {
-        "light" -> MODE_NIGHT_NO
-        "dark" -> MODE_NIGHT_YES
-        "follow_system" -> MODE_NIGHT_FOLLOW_SYSTEM
-        else -> MODE_NIGHT_AUTO_BATTERY
+        "light" -> AppCompatDelegate.MODE_NIGHT_NO
+        "dark" -> AppCompatDelegate.MODE_NIGHT_YES
+        "follow_system" -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        else -> AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
       }
     )
   }
