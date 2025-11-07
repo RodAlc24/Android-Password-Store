@@ -23,7 +23,7 @@
   <string name="title_activity_git_log">Commit log</string>
 
   <!-- Password Store -->
-  <string name="creation_dialog_text">Please clone or create a new repository below before trying to add a password or running any synchronization operation.</string>
+  <string name="creation_dialog_text">Please clone or create a new repository below before trying to add a password or running any synchronisation operation.</string>
   <plurals name="delete_dialog_text">
     <item quantity="one">Are you sure you want to delete the selected item?</item>
     <item quantity="other">Are you sure you want to delete the %d selected items?</item>
@@ -43,7 +43,7 @@
   <string name="git_commit_remove_text">Remove %1$s from store.</string>
   <string name="git_commit_move_text">Rename %1$s to %2$s.</string>
   <string name="git_commit_move_multiple_text">Move multiple passwords to %1$s.</string>
-  <string name="git_commit_gpg_id">Initialize PGP IDs in %1$s.</string>
+  <string name="git_commit_gpg_id">Initialise PGP IDs in %1$s.</string>
 
   <!-- PGPHandler -->
   <string name="clipboard_copied_text">Copied to clipboard</string>
@@ -115,7 +115,7 @@
   <string name="ssh_key_error_dialog_text">Message : \n</string>
   <string name="pref_recursive_filter_title">Recursive filtering</string>
   <string name="pref_recursive_filter_summary">Recursively find passwords of the current directory.</string>
-  <string name="pref_directory_structure">Password file organization</string>
+  <string name="pref_directory_structure">Password file organisation</string>
   <string name="pref_sort_order_title">Password sort order</string>
   <string name="pref_folder_first_sort_order">Folders first</string>
   <string name="pref_file_first_sort_order">Files first</string>
@@ -195,7 +195,7 @@
   <string name="dialog_yes">Yes</string>
   <string name="dialog_no">No</string>
   <string name="dialog_cancel">Cancel</string>
-  <string name="git_sync">Synchronize repository</string>
+  <string name="git_sync">Synchronise repository</string>
   <string name="git_pull">Pull from remote</string>
   <string name="git_push">Push to remote</string>
   <string name="git_push_up_to_date">Everything up-to-date</string>
@@ -294,7 +294,7 @@
   <string name="bottom_sheet_create_pgp_key">Create new key</string>
   <string name="pref_debug_logging_summary">Enable debug logging (requires app restart)</string>
   <string name="pref_debug_logging_title">Debug logging</string>
-  <string name="preference_default_username_summary">If Autofill is unable to determine a username from your password file or directory structure, it will use the value specified here</string>
+  <string name="preference_default_username_summary">If the autofill function cannot retrieve the username from the contents of a password file, the value specified here will be used</string>
   <string name="preference_default_username_title">Default username</string>
   <string name="git_operation_hint_password">Password</string>
   <string name="preference_custom_public_suffixes_title">Custom domains</string>
@@ -327,7 +327,7 @@
   <string name="git_pull_rebase_fail_error">Pull has failed, you\'re in a detached head. Using "settings > git utils", save your changes to the remote in a new branch and resolve the conflict on your computer.</string>
   <string name="git_pull_merge_fail_error">Merge has failed, you\'re in a conflicting state. TODO: Add a recovery method.</string>
 
-  <string name="git_push_nff_error">Push was rejected by remote, run pull before pushing again. You can use Synchronize rather than pull/push as it implements both</string>
+  <string name="git_push_nff_error">Push was rejected by remote, run pull before pushing again. You can use Synchronise rather than pull/push as it implements both</string>
   <string name="git_push_generic_error">Push was rejected by remote, reason: %1$s</string>
   <string name="git_push_other_error">Remote rejected non-fast-forward push. Check receive.denyNonFastForwards variable in config file of destination repository.</string>
   <string name="git_unknown_host">Unknown host: %1$s</string>
@@ -347,7 +347,7 @@
   <string name="clone_remote_repo">Clone Remote Repo</string>
   <string name="create_local_repo">Create Local Repo</string>
   <string name="select_gpg_key_title">Select\nPGP key(s)</string>
-  <string name="select_gpg_key_message">Select one or multiple PGP keys that you want to initialize the store with.</string>
+  <string name="select_gpg_key_message">Select one or multiple PGP keys that you want to initialise the store with.</string>
   <string name="gpg_key_select">Select key(s)</string>
 
   <!-- SSH port validation -->
