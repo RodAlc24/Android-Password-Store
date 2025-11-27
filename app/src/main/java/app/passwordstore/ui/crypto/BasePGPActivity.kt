@@ -169,7 +169,6 @@ open class BasePGPActivity : AppCompatActivity() {
     showSnackbar: Boolean = true,
   ): ScheduledExecutorService? {
     copyTextToClipboard(password, isSensitive = isSensitive, showSnackbar)
-    password?.wipe()
 
     val clearAfter = settings.getString(PreferenceKeys.GENERAL_SHOW_TIME)?.toIntOrNull() ?: 45
     val deepClear = settings.getBoolean(PreferenceKeys.CLEAR_CLIPBOARD_HISTORY, false)

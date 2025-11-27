@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file
 
 ## [Unreleased]
 
+### Fixed
+
+- Issue #589 fixed: password is inadvertently overwritten if "Edit password" screen is left via Copy-Save button
+
 ## [1.15.3] - 2025-11-21
 
 ### Added
