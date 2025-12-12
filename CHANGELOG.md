@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file
 
 ## [Unreleased]
 
+### Added
+
+- Allow custom port setting for Git via http
+
 ### Fixed
 
 - App crashed when dealing with expired PGP keys. From now on, password items can be decrypted and displayed even after the key has expired, but they can no longer be edited, and no new items can be created.
